@@ -9,11 +9,11 @@ const { validationResult } = require('express-validator');
 // Get all vehicles with filtering and pagination
 exports.getAllVehicles = async (req, res) => {
   try {
-    const { 
+    const {
       category, subcategory_id, make, model, year_min, year_max,
       price_min, price_max, mileage_min, mileage_max, region, city,
       condition, fuel_type, transmission, search_term,
-      page = 1, limit = 10 
+      page = 1, limit = 15, sort = 'created_at', order = 'desc', random = 'false'
     } = req.query;
 
     // Build filter object
@@ -48,7 +48,9 @@ exports.getAllVehicles = async (req, res) => {
       search_term
     };
 
-    const result = await Vehicle.search(searchParams, page, limit);
+    // Use random ordering if requested
+    const finalSort = random === 'true' ? 'random' : sort;
+    const result = await Vehicle.search(searchParams, page, limit, finalSort, order);
 
     // Get images for each vehicle
     for (const vehicle of result.vehicles) {
@@ -415,16 +417,17 @@ exports.getDealerVehicles = async (req, res) => {
 // Get featured vehicles
 exports.getFeaturedVehicles = async (req, res) => {
   try {
-    const { limit = 6 } = req.query;
-    
+    const { limit = 15, random = 'false', category = 'trucks' } = req.query;
+    const isRandom = random === 'true';
+
     // Get featured vehicles
-    const vehicles = await Vehicle.getFeatured(limit); // Changed from findFeatured to getFeatured
-    
+    const vehicles = await Vehicle.getFeatured(limit, isRandom, category);
+
     // Get images for each vehicle
     for (const vehicle of vehicles) {
       vehicle.images = await VehicleImage.findByVehicleId(vehicle.vehicle_id);
     }
-    
+
     res.json({ vehicles });
   } catch (error) {
     console.error('Get featured vehicles error:', error);
@@ -619,7 +622,7 @@ exports.getMakesByCategory = async (req, res) => {
 exports.getModelsByMake = async (req, res) => {
   try {
     const { make, category } = req.query;
-    
+
     if (!make || !category) {
       return res.status(400).json({ message: 'Make and category are required' });
     }
@@ -629,5 +632,16 @@ exports.getModelsByMake = async (req, res) => {
   } catch (error) {
     console.error('Get models by make error:', error);
     res.status(500).json({ message: 'Server error while fetching models' });
+  }
+};
+
+// Get all unique categories
+exports.getAllCategories = async (req, res) => {
+  try {
+    const categories = await Vehicle.getAllCategories();
+    res.json({ categories });
+  } catch (error) {
+    console.error('Get all categories error:', error);
+    res.status(500).json({ message: 'Server error while fetching categories' });
   }
 };

@@ -53,39 +53,64 @@ class Vehicle {
     }
   }
 
-  static async getAll(filters = {}, page = 1, limit = 10) {
+  static async getAll(filters = {}, page = 1, limit = 10, sort = 'created_at', order = 'desc') {
     try {
       let query = 'SELECT * FROM vehicles';
       let countQuery = 'SELECT COUNT(*) as total FROM vehicles';
       let queryParams = [];
-      
+
       // Build WHERE clause based on filters
       if (Object.keys(filters).length > 0) {
         const whereConditions = [];
-        
+
         for (const [key, value] of Object.entries(filters)) {
           if (value !== undefined && value !== null && value !== '') {
-            whereConditions.push(`${key} = ?`);
-            queryParams.push(value);
+            if (key === 'category') {
+              if (value === 'others') {
+                // Others: exclude trucks, commercial, and buses (include machinery, spares, trailers, etc.)
+                whereConditions.push('category NOT IN (?, ?)');
+                queryParams.push('trucks', 'commercial');
+              } else {
+                whereConditions.push(`${key} = ?`);
+                queryParams.push(value);
+              }
+            } else {
+              whereConditions.push(`${key} = ?`);
+              queryParams.push(value);
+            }
           }
         }
-        
+
         if (whereConditions.length > 0) {
           const whereClause = whereConditions.join(' AND ');
           query += ` WHERE ${whereClause}`;
           countQuery += ` WHERE ${whereClause}`;
         }
       }
-      
+
+      // Add sorting - check for random order first
+      if (sort === 'random') {
+        query += ' ORDER BY RAND()';
+      } else {
+        const validSortColumns = ['created_at', 'price', 'year', 'mileage', 'make', 'model'];
+        const validOrders = ['asc', 'desc'];
+
+        if (validSortColumns.includes(sort) && validOrders.includes(order.toLowerCase())) {
+          query += ` ORDER BY ${sort} ${order.toUpperCase()}`;
+        } else {
+          query += ' ORDER BY created_at DESC';
+        }
+      }
+
       // Add pagination
       const offset = (page - 1) * limit;
-      query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+      query += ' LIMIT ? OFFSET ?';
       queryParams.push(parseInt(limit), parseInt(offset));
-      
+
       // Execute queries
       const [rows] = await db.query(query, queryParams);
       const [countResult] = await db.query(countQuery, queryParams.slice(0, -2));
-      
+
       return {
         vehicles: rows,
         pagination: {
@@ -165,6 +190,15 @@ class Vehicle {
             const placeholders = value.map(() => '?').join(',');
             whereConditions.push(`make IN (${placeholders})`);
             queryParams.push(...value);
+          } else if (key === 'category') {
+            if (value === 'others') {
+              // Others: exclude trucks, commercial (include machinery, spares, trailers, etc.)
+              whereConditions.push('category NOT IN (?, ?)');
+              queryParams.push('trucks', 'commercial');
+            } else {
+              whereConditions.push(`${key} = ?`);
+              queryParams.push(value);
+            }
           } else {
             whereConditions.push(`${key} = ?`);
             queryParams.push(value);
@@ -201,12 +235,31 @@ class Vehicle {
     }
   }
 
-  static async getFeatured(limit = 6) {
+  static async getFeatured(limit = 6, random = false, category = 'trucks') {
     try {
-      const [rows] = await db.query(
-        'SELECT * FROM vehicles WHERE featured = 1 AND status = "available" ORDER BY created_at DESC LIMIT ?',
-        [parseInt(limit)]
-      );
+      let query = 'SELECT * FROM vehicles WHERE featured = 1 AND status = "available"';
+      let queryParams = [];
+
+      // Add category filter
+      if (category && category !== 'others') {
+        query += ' AND category = ?';
+        queryParams.push(category);
+      } else if (category === 'others') {
+        // Others: exclude trucks, commercial (include machinery, spares, trailers, etc.)
+        query += ' AND category NOT IN (?, ?)';
+        queryParams.push('trucks', 'commercial');
+      }
+
+      if (random) {
+        query += ' ORDER BY RAND()';
+      } else {
+        query += ' ORDER BY created_at DESC';
+      }
+
+      query += ' LIMIT ?';
+      queryParams.push(parseInt(limit));
+
+      const [rows] = await db.query(query, queryParams);
       return rows;
     } catch (error) {
       throw error;
@@ -232,6 +285,17 @@ class Vehicle {
         [make, category]
       );
       return rows.map(row => row.model);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getAllCategories() {
+    try {
+      const [rows] = await db.query(
+        'SELECT DISTINCT category FROM vehicles WHERE category IS NOT NULL AND category != "" ORDER BY category ASC'
+      );
+      return rows.map(row => row.category);
     } catch (error) {
       throw error;
     }

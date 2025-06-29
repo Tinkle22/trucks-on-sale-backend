@@ -12,6 +12,7 @@ router.get('/stats/all', vehicleController.getVehicleStats);
 // New routes for makes and models - these must come before /:id route
 router.get('/makes', vehicleController.getMakesByCategory);
 router.get('/models', vehicleController.getModelsByMake);
+router.get('/categories', vehicleController.getAllCategories);
 
 // Routes with parameters
 router.get('/:id', vehicleController.getVehicleById);

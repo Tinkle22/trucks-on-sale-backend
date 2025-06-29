@@ -6,10 +6,15 @@ const path = require('path');
 require('dotenv').config();
 
 // Import routes
-// Remove this line: const userRoutes = require('./routes/userRoutes');
+const userRoutes = require('./routes/userRoutes');
 const vehicleRoutes = require('./routes/vehicleRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
 const subcategoryRoutes = require('./routes/subcategoryRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const auctionRoutes = require('./routes/auctionRoutes');
+const financeApplicationRoutes = require('./routes/financeApplicationRoutes');
+const hireBookingRoutes = require('./routes/hireBookingRoutes');
+const premiumBackgroundRoutes = require('./routes/premiumBackgroundRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,10 +30,15 @@ app.use(morgan('dev'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
-// Remove this line: app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/subcategories', subcategoryRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/auctions', auctionRoutes);
+app.use('/api/finance-applications', financeApplicationRoutes);
+app.use('/api/hire-bookings', hireBookingRoutes);
+app.use('/api/premium-backgrounds', premiumBackgroundRoutes);
 
 // Root route
 app.get('/', (req, res) => {

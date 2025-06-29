@@ -233,15 +233,91 @@ exports.getAllUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const deleted = await User.delete(id);
     if (!deleted) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
     console.error('Delete user error:', error);
     res.status(500).json({ message: 'Server error while deleting user' });
+  }
+};
+
+// Get user by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Remove password from response
+    delete user.password;
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Get user by ID error:', error);
+    res.status(500).json({ message: 'Server error while fetching user' });
+  }
+};
+
+// Update user status (admin only)
+exports.updateUserStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    if (!['pending', 'active', 'suspended', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+
+    // Check if user exists
+    const existingUser = await User.findById(id);
+    if (!existingUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update status
+    const updated = await User.updateStatus(id, status);
+
+    if (!updated) {
+      return res.status(500).json({ message: 'Failed to update user status' });
+    }
+
+    res.json({ message: `User status updated to ${status}` });
+  } catch (error) {
+    console.error('Update user status error:', error);
+    res.status(500).json({ message: 'Server error while updating user status' });
+  }
+};
+
+// Get dealers
+exports.getDealers = async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const result = await User.getDealers(page, limit);
+
+    res.json(result);
+  } catch (error) {
+    console.error('Get dealers error:', error);
+    res.status(500).json({ message: 'Server error while fetching dealers' });
+  }
+};
+
+// Get user statistics (admin only)
+exports.getUserStatistics = async (req, res) => {
+  try {
+    const stats = await User.getStatistics();
+    res.json({ stats });
+  } catch (error) {
+    console.error('Get user statistics error:', error);
+    res.status(500).json({ message: 'Server error while fetching user statistics' });
   }
 };

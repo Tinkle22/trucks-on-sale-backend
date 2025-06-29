@@ -12,13 +12,13 @@ class Inquiry {
 
   static async create(inquiryData) {
     try {
-      const { vehicle_id, user_id, message, contact_number } = inquiryData;
-      
+      const { vehicle_id, dealer_id, full_name, email, phone, message } = inquiryData;
+
       const [result] = await db.query(
-        'INSERT INTO inquiries (vehicle_id, user_id, message, contact_number) VALUES (?, ?, ?, ?)',
-        [vehicle_id, user_id, message, contact_number]
+        'INSERT INTO inquiries (vehicle_id, dealer_id, full_name, email, phone, message) VALUES (?, ?, ?, ?, ?, ?)',
+        [vehicle_id, dealer_id, full_name, email, phone, message]
       );
-      
+
       return { inquiry_id: result.insertId, ...inquiryData, status: 'new', created_at: new Date() };
     } catch (error) {
       throw error;
@@ -41,7 +41,7 @@ class Inquiry {
   static async getByVehicleId(vehicleId) {
     try {
       const [rows] = await db.query(
-        'SELECT i.*, u.username, u.email FROM inquiries i JOIN users u ON i.user_id = u.user_id WHERE i.vehicle_id = ? ORDER BY i.created_at DESC',
+        'SELECT * FROM inquiries WHERE vehicle_id = ? ORDER BY created_at DESC',
         [vehicleId]
       );
       return rows;
@@ -52,14 +52,15 @@ class Inquiry {
 
   static async getByUserId(userId) {
     try {
+      // Since we don't have user_id, we'll search by email or full_name
+      // This method might not be very useful without proper user management
       const [rows] = await db.query(
-        `SELECT i.*, v.make, v.model, v.year, u.username as dealer_name 
-         FROM inquiries i 
-         JOIN vehicles v ON i.vehicle_id = v.vehicle_id 
-         JOIN users u ON v.dealer_id = u.user_id 
-         WHERE i.user_id = ? 
+        `SELECT i.*, v.make, v.model, v.year
+         FROM inquiries i
+         JOIN vehicles v ON i.vehicle_id = v.vehicle_id
+         WHERE i.email = ? OR i.full_name = ?
          ORDER BY i.created_at DESC`,
-        [userId]
+        [userId, userId]
       );
       return rows;
     } catch (error) {
@@ -70,11 +71,10 @@ class Inquiry {
   static async getByDealerId(dealerId) {
     try {
       const [rows] = await db.query(
-        `SELECT i.*, v.make, v.model, v.year, u.username, u.email, u.phone 
-         FROM inquiries i 
-         JOIN vehicles v ON i.vehicle_id = v.vehicle_id 
-         JOIN users u ON i.user_id = u.user_id 
-         WHERE v.dealer_id = ? 
+        `SELECT i.*, v.make, v.model, v.year
+         FROM inquiries i
+         JOIN vehicles v ON i.vehicle_id = v.vehicle_id
+         WHERE v.dealer_id = ?
          ORDER BY i.created_at DESC`,
         [dealerId]
       );

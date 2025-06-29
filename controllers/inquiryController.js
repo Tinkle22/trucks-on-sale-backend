@@ -19,45 +19,10 @@ exports.getInquiriesByVehicle = async (req, res) => {
 // Get all inquiries for a user
 exports.getInquiriesByUser = async (req, res) => {
   try {
-    // Get user ID from authenticated user
-    // In getInquiriesByUser function
-    // Replace this:
-    // const userId = req.user.user_id;
-    // With this:
     const userId = req.params.userId;
-    
-    // In getInquiriesByDealer function
-    // Replace this:
-    // const dealerId = req.user.user_id;
-    // With this:
-    const dealerId = req.params.dealerId;
-    
-    // In createInquiry function
-    // Replace this:
-    // req.body.user_id = req.user.user_id;
-    // With this:
-    // Make sure user_id is provided in the request body
-    if (!req.body.user_id) {
-      return res.status(400).json({ message: 'User ID is required' });
-    }
-    
-    // In deleteInquiry function
-    // Remove authorization check:
-    // if (req.user.user_type !== 'admin' && req.user.user_id !== inquiry.user_id) {
-    //   return res.status(403).json({ message: 'Not authorized to delete this inquiry' });
-    // }
-    
-    // In createInquiryReply function
-    // Replace this:
-    // req.body.user_id = req.user.user_id;
-    // With this:
-    // Make sure user_id is provided in the request body
-    if (!req.body.user_id) {
-      return res.status(400).json({ message: 'User ID is required' });
-    }
-    
+
     const inquiries = await Inquiry.getByUserId(userId);
-    
+
     res.json({ inquiries });
   } catch (error) {
     console.error('Get inquiries by user error:', error);
@@ -68,11 +33,10 @@ exports.getInquiriesByUser = async (req, res) => {
 // Get all inquiries for a dealer
 exports.getInquiriesByDealer = async (req, res) => {
   try {
-    // Get dealer ID from authenticated user
-    const dealerId = req.user.user_id;
-    
+    const dealerId = req.params.dealerId;
+
     const inquiries = await Inquiry.getByDealerId(dealerId);
-    
+
     res.json({ inquiries });
   } catch (error) {
     console.error('Get inquiries by dealer error:', error);
@@ -108,11 +72,18 @@ exports.createInquiry = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Set user_id from authenticated user
-    req.body.user_id = req.user.user_id;
-    
-    const inquiry = await Inquiry.create(req.body);
-    
+    // Extract and validate required fields
+    const { vehicle_id, dealer_id, full_name, email, phone, message } = req.body;
+
+    const inquiry = await Inquiry.create({
+      vehicle_id,
+      dealer_id,
+      full_name,
+      email,
+      phone,
+      message
+    });
+
     res.status(201).json({ message: 'Inquiry created successfully', inquiry });
   } catch (error) {
     console.error('Create inquiry error:', error);
@@ -153,10 +124,7 @@ exports.deleteInquiry = async (req, res) => {
       return res.status(404).json({ message: 'Inquiry not found' });
     }
     
-    // Check if user is authorized to delete this inquiry
-    if (req.user.user_type !== 'admin' && req.user.user_id !== inquiry.user_id) {
-      return res.status(403).json({ message: 'Not authorized to delete this inquiry' });
-    }
+    // No authorization check needed since authentication is removed
     
     const deleted = await Inquiry.delete(id);
     if (!deleted) {
@@ -186,8 +154,10 @@ exports.createReply = async (req, res) => {
       return res.status(404).json({ message: 'Inquiry not found' });
     }
     
-    // Set user_id from authenticated user
-    req.body.user_id = req.user.user_id;
+    // Make sure user_id is provided in the request body (no authentication required)
+    if (!req.body.user_id) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
     req.body.inquiry_id = inquiryId;
     
     const reply = await InquiryReply.create(req.body);

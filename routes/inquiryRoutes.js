@@ -9,10 +9,13 @@ router.get('/user/:userId', inquiryController.getInquiriesByUser);
 router.get('/dealer/:dealerId', inquiryController.getInquiriesByDealer);
 router.get('/:id', inquiryController.getInquiryById);
 
-router.post('/', 
+router.post('/',
   [
     check('vehicle_id').isNumeric().withMessage('Vehicle ID is required'),
-    check('user_id').isNumeric().withMessage('User ID is required'),
+    check('dealer_id').isNumeric().withMessage('Dealer ID is required'),
+    check('full_name').notEmpty().withMessage('Full name is required'),
+    check('email').isEmail().withMessage('Valid email is required'),
+    check('phone').notEmpty().withMessage('Phone number is required'),
     check('message').notEmpty().withMessage('Message is required')
   ],
   inquiryController.createInquiry
