@@ -155,11 +155,13 @@ class Vehicle {
 
   static async search(searchParams, page = 1, limit = 10) {
     try {
+      console.log('Vehicle.search called with params:', JSON.stringify(searchParams, null, 2));
+
       let query = 'SELECT * FROM vehicles';
       let countQuery = 'SELECT COUNT(*) as total FROM vehicles';
       let whereConditions = [];
       let queryParams = [];
-      
+
       // Build WHERE clause based on search parameters
       for (const [key, value] of Object.entries(searchParams)) {
         if (value !== undefined && value !== null && value !== '') {
@@ -181,6 +183,18 @@ class Vehicle {
           } else if (key === 'mileage_max') {
             whereConditions.push('mileage <= ?');
             queryParams.push(parseInt(value));
+          } else if (key === 'hours_min') {
+            whereConditions.push('hours_used >= ?');
+            queryParams.push(parseInt(value));
+          } else if (key === 'hours_max') {
+            whereConditions.push('hours_used <= ?');
+            queryParams.push(parseInt(value));
+          } else if (key === 'horsepower_min') {
+            whereConditions.push('horsepower >= ?');
+            queryParams.push(parseInt(value));
+          } else if (key === 'horsepower_max') {
+            whereConditions.push('horsepower <= ?');
+            queryParams.push(parseInt(value));
           } else if (key === 'search_term') {
             whereConditions.push('(make LIKE ? OR model LIKE ? OR description LIKE ?)');
             const searchTerm = `%${value}%`;
@@ -199,28 +213,84 @@ class Vehicle {
               whereConditions.push(`${key} = ?`);
               queryParams.push(value);
             }
-          } else {
+          } else if (key === 'listing_type' && value !== 'all') {
+            // Handle listing type filter
+            whereConditions.push('listing_type = ?');
+            queryParams.push(value);
+          } else if (key === 'condition_type' && value !== 'all') {
+            // Handle condition type filter
+            whereConditions.push('condition_type = ?');
+            queryParams.push(value);
+          } else if (key === 'condition_rating' && value !== 'all') {
+            // Handle condition rating filter
+            whereConditions.push('condition_rating = ?');
+            queryParams.push(value);
+          } else if (key === 'color' && value !== 'All Colors') {
+            // Handle color filter
+            whereConditions.push('color = ?');
+            queryParams.push(value);
+          } else if (key === 'engine_type' && value !== 'all') {
+            // Handle engine type filter
+            whereConditions.push('engine_type = ?');
+            queryParams.push(value);
+          } else if (key === 'transmission' && value !== 'all') {
+            // Handle transmission filter
+            whereConditions.push('transmission = ?');
+            queryParams.push(value);
+          } else if (key === 'fuel_type' && value !== 'all') {
+            // Handle fuel type filter
+            whereConditions.push('fuel_type = ?');
+            queryParams.push(value);
+          } else if (key === 'no_accidents' && value === 1) {
+            // Handle boolean filter - only add when true
+            whereConditions.push('no_accidents = 1');
+          } else if (key === 'warranty' && value === 1) {
+            // Handle boolean filter - only add when true
+            whereConditions.push('warranty = 1');
+          } else if (key === 'finance_available' && value === 1) {
+            // Handle boolean filter - only add when true
+            whereConditions.push('finance_available = 1');
+          } else if (key === 'trade_in' && value === 1) {
+            // Handle boolean filter - only add when true
+            whereConditions.push('trade_in = 1');
+          } else if (key === 'service_history' && value === 1) {
+            // Handle boolean filter - only add when true
+            whereConditions.push('service_history = 1');
+          } else if (key === 'roadworthy' && value === 1) {
+            // Handle boolean filter - only add when true
+            whereConditions.push('roadworthy = 1');
+          } else if (key === 'featured' && value === 1) {
+            // Handle boolean filter - only add when true
+            whereConditions.push('featured = 1');
+          } else if (['region', 'city', 'model', 'variant'].includes(key)) {
+            // Handle other standard string filters
             whereConditions.push(`${key} = ?`);
             queryParams.push(value);
           }
+          // Note: Removed the generic else clause to prevent unhandled parameters from being processed
         }
       }
-      
+
       if (whereConditions.length > 0) {
         const whereClause = whereConditions.join(' AND ');
         query += ` WHERE ${whereClause}`;
         countQuery += ` WHERE ${whereClause}`;
       }
-      
+
+      console.log('Generated SQL query:', query);
+      console.log('Query parameters:', queryParams);
+
       // Add pagination
       const offset = (page - 1) * limit;
       query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
       queryParams.push(parseInt(limit), parseInt(offset));
-      
+
       // Execute queries
       const [rows] = await db.query(query, queryParams);
       const [countResult] = await db.query(countQuery, queryParams.slice(0, -2));
-      
+
+      console.log(`Vehicle.search found ${rows.length} vehicles out of ${countResult[0].total} total`);
+
       return {
         vehicles: rows,
         pagination: {

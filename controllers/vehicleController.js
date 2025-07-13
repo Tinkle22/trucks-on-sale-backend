@@ -9,10 +9,15 @@ const { validationResult } = require('express-validator');
 // Get all vehicles with filtering and pagination
 exports.getAllVehicles = async (req, res) => {
   try {
+    console.log('getAllVehicles called with query params:', JSON.stringify(req.query, null, 2));
+
     const {
-      category, subcategory_id, make, model, year_min, year_max,
-      price_min, price_max, mileage_min, mileage_max, region, city,
-      condition, fuel_type, transmission, search_term,
+      category, subcategory_id, make, model, variant, year_min, year_max,
+      price_min, price_max, mileage_min, mileage_max, hours_min, hours_max,
+      region, city, condition, condition_type, condition_rating,
+      fuel_type, transmission, engine_type, color, horsepower_min, horsepower_max,
+      listing_type, no_accidents, warranty, finance_available, trade_in,
+      service_history, roadworthy, featured, search_term,
       page = 1, limit = 15, sort = 'created_at', order = 'desc', random = 'false'
     } = req.query;
 
@@ -30,11 +35,26 @@ exports.getAllVehicles = async (req, res) => {
       }
     }
     if (model) filters.model = model;
+    if (variant) filters.variant = variant;
     if (region) filters.region = region;
     if (city) filters.city = city;
-    if (condition) filters.condition = condition;
+    if (condition) filters.condition_type = condition;
+    if (condition_type) filters.condition_type = condition_type;
+    if (condition_rating) filters.condition_rating = condition_rating;
     if (fuel_type) filters.fuel_type = fuel_type;
     if (transmission) filters.transmission = transmission;
+    if (engine_type) filters.engine_type = engine_type;
+    if (color) filters.color = color;
+    if (listing_type) filters.listing_type = listing_type;
+
+    // Feature filters (boolean values)
+    if (no_accidents === 'true' || no_accidents === true) filters.no_accidents = 1;
+    if (warranty === 'true' || warranty === true) filters.warranty = 1;
+    if (finance_available === 'true' || finance_available === true) filters.finance_available = 1;
+    if (trade_in === 'true' || trade_in === true) filters.trade_in = 1;
+    if (service_history === 'true' || service_history === true) filters.service_history = 1;
+    if (roadworthy === 'true' || roadworthy === true) filters.roadworthy = 1;
+    if (featured === 'true' || featured === true) filters.featured = 1;
 
     // For range filters and search term, we'll handle them in the search method
     const searchParams = {
@@ -45,6 +65,10 @@ exports.getAllVehicles = async (req, res) => {
       price_max,
       mileage_min,
       mileage_max,
+      hours_min,
+      hours_max,
+      horsepower_min,
+      horsepower_max,
       search_term
     };
 
