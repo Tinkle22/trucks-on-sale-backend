@@ -415,22 +415,25 @@ exports.getDealerVehicles = async (req, res) => {
   try {
     const { dealer_id } = req.params;
     const { page = 1, limit = 10 } = req.query;
-    
+
+    console.log('getDealerVehicles called with params:', { dealer_id, page, limit });
+
     // Check if dealer exists
     // This would require a User model, but we'll assume it exists
     // const dealer = await User.findById(dealer_id);
     // if (!dealer) {
     //   return res.status(404).json({ message: 'Dealer not found' });
     // }
-    
+
     // Get dealer vehicles with pagination
-    const result = await Vehicle.findByDealerId(dealer_id, page, limit);
+    const result = await Vehicle.getByDealer(dealer_id, page, limit);
     
     // Get images for each vehicle
     for (const vehicle of result.vehicles) {
       vehicle.images = await VehicleImage.findByVehicleId(vehicle.vehicle_id);
     }
-    
+
+    console.log(`Found ${result.vehicles.length} vehicles for dealer ${dealer_id}`);
     res.json(result);
   } catch (error) {
     console.error('Get dealer vehicles error:', error);
