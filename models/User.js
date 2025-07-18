@@ -157,16 +157,32 @@ class User {
   static async getDealers(page = 1, limit = 10) {
     try {
       const offset = (page - 1) * limit;
-      
-      const [rows] = await db.query(
-        'SELECT user_id, username, email, phone, company_name, status, registered_at FROM users WHERE user_type = "dealer" ORDER BY registered_at DESC LIMIT ? OFFSET ?',
+
+      // Get dealers with vehicle count and additional info
+      const [rows] = await db.query(`
+        SELECT
+          u.user_id,
+          u.username,
+          u.email,
+          u.phone,
+          u.company_name,
+          u.status,
+          u.registered_at,
+          u.physical_address,
+          COUNT(v.vehicle_id) as vehicle_count
+        FROM users u
+        LEFT JOIN vehicles v ON u.user_id = v.dealer_id AND v.status = 'available'
+        WHERE u.user_type = "dealer" AND u.status = "active"
+        GROUP BY u.user_id
+        ORDER BY u.registered_at DESC
+        LIMIT ? OFFSET ?`,
         [parseInt(limit), parseInt(offset)]
       );
-      
+
       const [countResult] = await db.query(
-        'SELECT COUNT(*) as total FROM users WHERE user_type = "dealer"'
+        'SELECT COUNT(*) as total FROM users WHERE user_type = "dealer" AND status = "active"'
       );
-      
+
       return {
         dealers: rows,
         pagination: {

@@ -34,6 +34,7 @@ const changePasswordValidation = [
 // Public routes
 router.post('/register', registerValidation, userController.register);
 router.post('/login', loginValidation, userController.login);
+router.get('/dealers/public', userController.getDealers); // Public endpoint for mobile app
 
 // Protected routes (require authentication)
 router.get('/profile', authenticateToken, userController.getProfile);
