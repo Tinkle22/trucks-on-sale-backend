@@ -1,9 +1,9 @@
 <?php
 // Database configuration
 $host = 'localhost';
-$dbname = 'trucks_on_sale';
-$username = 'root';
-$password = '';
+$dbname = 'truck_tos';
+$username = 'truc_brian';
+$password = 'Brian0776828793';
 
 try {
     // Create PDO instance
