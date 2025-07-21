@@ -9,7 +9,7 @@ const versionConfig = {
   release_notes: 'Bug fixes and performance improvements. Enhanced vehicle search and improved user experience.',
   ios_url: 'https://apps.apple.com/app/trucks-on-sale/id123456789', // Replace with actual App Store URL
   android_url: 'https://play.google.com/store/apps/details?id=com.lesa2022.trucksonsale',
-  force_update_below: '1.0.0', // Force update for versions below this
+  force_update_below: '9.0.4', // Force update for versions below this
   update_url: 'https://trucksonsale.co.za/download' // Generic download page
 };
 
