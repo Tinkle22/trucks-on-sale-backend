@@ -15,6 +15,7 @@ const auctionRoutes = require('./routes/auctionRoutes');
 const financeApplicationRoutes = require('./routes/financeApplicationRoutes');
 const hireBookingRoutes = require('./routes/hireBookingRoutes');
 const premiumBackgroundRoutes = require('./routes/premiumBackgroundRoutes');
+const versionRoutes = require('./routes/versionRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,6 +40,7 @@ app.use('/api/auctions', auctionRoutes);
 app.use('/api/finance-applications', financeApplicationRoutes);
 app.use('/api/hire-bookings', hireBookingRoutes);
 app.use('/api/premium-backgrounds', premiumBackgroundRoutes);
+app.use('/api/version', versionRoutes);
 
 // Root route
 app.get('/', (req, res) => {
