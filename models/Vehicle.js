@@ -68,8 +68,8 @@ class Vehicle {
             if (key === 'category') {
               if (value === 'others') {
                 // Others: exclude trucks, commercial, and buses (include machinery, spares, trailers, etc.)
-                whereConditions.push('category NOT IN (?, ?)');
-                queryParams.push('trucks', 'commercial');
+                whereConditions.push('category NOT IN (?, ?, ?)');
+                queryParams.push('trucks', 'commercial', 'buses');
               } else {
                 whereConditions.push(`${key} = ?`);
                 queryParams.push(value);
@@ -206,9 +206,9 @@ class Vehicle {
             queryParams.push(...value);
           } else if (key === 'category') {
             if (value === 'others') {
-              // Others: exclude trucks, commercial (include machinery, spares, trailers, etc.)
-              whereConditions.push('category NOT IN (?, ?)');
-              queryParams.push('trucks', 'commercial');
+              // Others: exclude trucks, commercial, and buses (include machinery, spares, trailers, etc.)
+              whereConditions.push('category NOT IN (?, ?, ?)');
+              queryParams.push('trucks', 'commercial', 'buses');
             } else {
               whereConditions.push(`${key} = ?`);
               queryParams.push(value);
@@ -315,9 +315,9 @@ class Vehicle {
         query += ' AND category = ?';
         queryParams.push(category);
       } else if (category === 'others') {
-        // Others: exclude trucks, commercial (include machinery, spares, trailers, etc.)
-        query += ' AND category NOT IN (?, ?)';
-        queryParams.push('trucks', 'commercial');
+        // Others: exclude trucks, commercial, and buses (include machinery, spares, trailers, etc.)
+        query += ' AND category NOT IN (?, ?, ?)';
+        queryParams.push('trucks', 'commercial', 'buses');
       }
 
       if (random) {

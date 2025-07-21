@@ -54,9 +54,9 @@ function simulateVehicleSearch(searchParams, page = 1, limit = 10) {
         queryParams.push(...value);
       } else if (key === 'category') {
         if (value === 'others') {
-          // Others: exclude trucks, commercial (include machinery, spares, trailers, etc.)
-          whereConditions.push('category NOT IN (?, ?)');
-          queryParams.push('trucks', 'commercial');
+          // Others: exclude trucks, commercial, and buses (include machinery, spares, trailers, etc.)
+          whereConditions.push('category NOT IN (?, ?, ?)');
+          queryParams.push('trucks', 'commercial', 'buses');
         } else {
           whereConditions.push(`${key} = ?`);
           queryParams.push(value);
