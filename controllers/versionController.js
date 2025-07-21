@@ -4,12 +4,12 @@ const path = require('path');
 
 // Version configuration - update these when releasing new versions
 const versionConfig = {
-  latest_version: '1.0.1',
+  latest_version: '1.0.0',
   minimum_version: '1.0.0',
   release_notes: 'Bug fixes and performance improvements. Enhanced vehicle search and improved user experience.',
   ios_url: 'https://apps.apple.com/app/trucks-on-sale/id123456789', // Replace with actual App Store URL
   android_url: 'https://play.google.com/store/apps/details?id=com.lesa2022.trucksonsale',
-  force_update_below: '9.0.4', // Force update for versions below this
+  // Removed force_update_below - all updates are now optional
   update_url: 'https://trucksonsale.co.za/download' // Generic download page
 };
 
@@ -70,8 +70,8 @@ exports.checkVersion = async (req, res) => {
     // Check if update is available
     const updateAvailable = compareVersions(versionConfig.latest_version, current_version) > 0;
 
-    // Check if force update is required
-    const forceUpdate = compareVersions(current_version, versionConfig.force_update_below) <= 0;
+    // All updates are now optional - no force updates
+    const forceUpdate = false;
 
     // Log the version check
     logVersionCheck({
@@ -157,7 +157,6 @@ exports.updateVersionConfig = async (req, res) => {
       release_notes,
       ios_url,
       android_url,
-      force_update_below,
       update_url
     } = req.body;
 
