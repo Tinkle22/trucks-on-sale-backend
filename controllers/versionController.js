@@ -175,7 +175,6 @@ exports.updateVersionConfig = async (req, res) => {
     if (release_notes) versionConfig.release_notes = release_notes;
     if (ios_url) versionConfig.ios_url = ios_url;
     if (android_url) versionConfig.android_url = android_url;
-    if (force_update_below) versionConfig.force_update_below = force_update_below;
     if (update_url) versionConfig.update_url = update_url;
 
     console.log('Version configuration updated:', versionConfig);
