@@ -133,7 +133,7 @@ if ($vehicleId) {
     <?php if ($vehicle && !empty($vehicle['images'])): ?>
     <meta property="og:image" content="<?php echo htmlspecialchars($vehicle['images'][0]); ?>">
     <?php else: ?>
-    <meta property="og:image" content="https://trucksonsale.co.za/assets/logo.png">
+    <meta property="og:image" content="https://trucks24.co.za/assets/logo.png">
     <?php endif; ?>
 
     <!-- Twitter Card Meta Tags -->
@@ -155,7 +155,7 @@ if ($vehicleId) {
                     <h1><i class="fas fa-truck"></i> Trucks On Sale</h1>
                 </div>
                 <div class="header-actions">
-                    <a href="https://trucksonsale.co.za" class="btn btn-primary">
+                    <a href="https://trucks24.co.za" class="btn btn-primary">
                         <i class="fas fa-home"></i> Visit Website
                     </a>
                     <a href="#" class="btn btn-secondary" onclick="downloadApp()">
@@ -293,7 +293,7 @@ if ($vehicleId) {
                         <i class="fas fa-search"></i>
                         <h3>No vehicles found</h3>
                         <p>Try adjusting your search criteria or browse all vehicles on our main website.</p>
-                        <a href="https://trucksonsale.co.za" class="btn btn-primary">Browse All Vehicles</a>
+                        <a href="https://trucks24.co.za" class="btn btn-primary">Browse All Vehicles</a>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -311,10 +311,10 @@ if ($vehicleId) {
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="https://trucksonsale.co.za">Home</a></li>
-                        <li><a href="https://trucksonsale.co.za/trucks">Browse Trucks</a></li>
-                        <li><a href="https://trucksonsale.co.za/sell">Sell Your Vehicle</a></li>
-                        <li><a href="https://trucksonsale.co.za/contact">Contact Us</a></li>
+                        <li><a href="https://trucks24.co.za">Home</a></li>
+                        <li><a href="https://trucks24.co.za/trucks">Browse Trucks</a></li>
+                        <li><a href="https://trucks24.co.za/sell">Sell Your Vehicle</a></li>
+                        <li><a href="https://trucks24.co.za/contact">Contact Us</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">

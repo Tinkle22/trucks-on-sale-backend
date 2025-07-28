@@ -22,9 +22,9 @@ $listing_type = $_GET['listing_type'] ?? null;
 $limit = min(intval($_GET['limit'] ?? 20), 50); // Max 50 vehicles
 
 // Base URL for the website
-$base_url = 'https://trucksonsale.co.za';
+$base_url = 'https://trucks24.co.za';
 $logo_url = $base_url . '/assets/logo.jpg';
-$app_url = 'https://trucksonsale.co.za/native'; // Link to download the app
+$app_url = 'https://trucks24.co.za/native'; // Link to download the app
 
 // Initialize variables
 $page_title = htmlspecialchars($title);
