@@ -152,11 +152,23 @@ class PremiumAd {
 
   // Transform to frontend format
   toFrontendFormat() {
+    // Construct full image URL if image_url exists
+    let imageUrl = null;
+    if (this.image_url) {
+      // If it's already a full URL, use as is
+      if (this.image_url.startsWith('http://') || this.image_url.startsWith('https://')) {
+        imageUrl = this.image_url;
+      } else {
+        // Otherwise, prepend the trucks24.co.za domain
+        imageUrl = `https://trucks24.co.za/${this.image_url.replace(/^\//, '')}`;
+      }
+    }
+
     return {
       id: this.id.toString(),
       title: this.title,
       subtitle: null, // Can be added to database later if needed
-      imageUrl: this.image_url,
+      imageUrl: imageUrl,
       backgroundColor: '#bb1010', // Default color, can be added to database later
       icon: null, // Can be added to database later if needed
       ctaText: 'Learn More', // Default CTA, can be added to database later
