@@ -8,7 +8,7 @@ const getAllActiveAds = async (req, res) => {
     
     res.json({
       success: true,
-      data: formattedAds,
+      ads: formattedAds,
       count: formattedAds.length
     });
   } catch (error) {
@@ -200,7 +200,7 @@ const getHomepageBannerAds = async (req, res) => {
     
     res.json({
       success: true,
-      data: formattedAds,
+      ads: formattedAds,
       count: formattedAds.length
     });
   } catch (error) {
