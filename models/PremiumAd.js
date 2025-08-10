@@ -160,7 +160,7 @@ class PremiumAd {
         imageUrl = this.image_url;
       } else {
         // Otherwise, prepend the trucks24.co.za domain
-        imageUrl = `https://trucks24.co.za/${this.image_url.replace(/^\//, '')}`;
+        imageUrl = `https://trucks24.co.za/listings/${this.image_url.replace(/^\//, '')}`;
       }
     }
 
