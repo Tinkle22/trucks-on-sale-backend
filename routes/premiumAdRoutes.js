@@ -24,8 +24,8 @@ router.get('/position/:position', getAdsByPosition);
 router.get('/type/:type/position/:position', getAdsByTypeAndPosition);
 
 // Specific homepage endpoints for convenience
-router.get('/homepage/banners', getHomepageBannerAds);
-router.get('/homepage/boxes', getHomepageBoxAds);
+router.get('/homepage/banner', getHomepageBannerAds);
+router.get('/homepage/box', getHomepageBoxAds);
 
 // Track ad impression
 router.post('/:id/impression', trackImpression);
