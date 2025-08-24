@@ -14,6 +14,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const auctionRoutes = require('./routes/auctionRoutes');
 const financeApplicationRoutes = require('./routes/financeApplicationRoutes');
 const hireBookingRoutes = require('./routes/hireBookingRoutes');
+const rent2OwnRoutes = require('./routes/rent2OwnRoutes');
 const premiumBackgroundRoutes = require('./routes/premiumBackgroundRoutes');
 const premiumAdRoutes = require('./routes/premiumAdRoutes');
 const versionRoutes = require('./routes/versionRoutes');
@@ -41,6 +42,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/auctions', auctionRoutes);
 app.use('/api/finance-applications', financeApplicationRoutes);
 app.use('/api/hire-bookings', hireBookingRoutes);
+app.use('/api/rent-to-own', rent2OwnRoutes);
 app.use('/api/premium-backgrounds', premiumBackgroundRoutes);
 app.use('/api/premium-ads', premiumAdRoutes);
 app.use('/api/version', versionRoutes);
@@ -60,6 +62,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+// Keep the process alive
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated');
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated');
+  });
 });
