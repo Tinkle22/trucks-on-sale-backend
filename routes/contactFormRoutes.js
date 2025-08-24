@@ -10,9 +10,9 @@ const {
   getContactFormById,
   updateContactFormStatus,
   deleteContactForm,
-  getContactFormStats
+  getContactFormStatistics
 } = require('../controllers/contactFormController');
-const { authenticateToken, requireRole } = require('../middleware/auth');
+const { authenticateToken, requireAdmin, requireDealerOrAdmin } = require('../middleware/auth');
 
 // Validation middleware for contact form creation
 const validateContactForm = [
@@ -61,30 +61,30 @@ router.post('/', validateContactForm, createContactForm);
 
 // Protected routes (require authentication)
 // GET /api/contact-forms - Get all forms (admin only) - supports filtering by form_type query parameter
-router.get('/', authenticateToken, requireRole(['admin']), getAllContactForms);
+router.get('/', authenticateToken, requireAdmin, getAllContactForms);
 
 // GET /api/contact-forms/finance - Get finance applications specifically (admin only)
-router.get('/finance', authenticateToken, requireRole(['admin']), getFinanceApplications);
+router.get('/finance', authenticateToken, requireAdmin, getFinanceApplications);
 
 // GET /api/contact-forms/contact - Get contact forms specifically (admin only)
-router.get('/contact', authenticateToken, requireRole(['admin']), getContactFormsOnly);
+router.get('/contact', authenticateToken, requireAdmin, getContactFormsOnly);
 
 // GET /api/contact-forms/statistics - Get contact form statistics (admin only)
-router.get('/statistics', authenticateToken, requireRole(['admin']), getContactFormStats);
+router.get('/statistics', authenticateToken, requireAdmin, getContactFormStatistics);
 
 // GET /api/contact-forms/dealership/:dealershipId - Get contact forms by dealership
-router.get('/dealership/:dealershipId', authenticateToken, requireRole(['admin', 'dealer']), getContactFormsByDealership);
+router.get('/dealership/:dealershipId', authenticateToken, requireDealerOrAdmin, getContactFormsByDealership);
 
 // GET /api/contact-forms/my-forms - Get current user's dealership contact forms
-router.get('/my-forms', authenticateToken, requireRole(['dealer']), getContactFormsByDealership);
+router.get('/my-forms', authenticateToken, requireDealerOrAdmin, getContactFormsByDealership);
 
 // GET /api/contact-forms/:id - Get a single contact form by ID
-router.get('/:id', authenticateToken, requireRole(['admin', 'dealer']), getContactFormById);
+router.get('/:id', authenticateToken, requireDealerOrAdmin, getContactFormById);
 
 // PUT /api/contact-forms/:id/status - Update contact form status
-router.put('/:id/status', authenticateToken, requireRole(['admin', 'dealer']), validateStatusUpdate, updateContactFormStatus);
+router.put('/:id/status', authenticateToken, requireDealerOrAdmin, validateStatusUpdate, updateContactFormStatus);
 
 // DELETE /api/contact-forms/:id - Delete a contact form (admin only)
-router.delete('/:id', authenticateToken, requireRole(['admin']), deleteContactForm);
+router.delete('/:id', authenticateToken, requireAdmin, deleteContactForm);
 
 module.exports = router;
