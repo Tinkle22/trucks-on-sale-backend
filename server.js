@@ -17,6 +17,7 @@ const hireBookingRoutes = require('./routes/hireBookingRoutes');
 const premiumBackgroundRoutes = require('./routes/premiumBackgroundRoutes');
 const premiumAdRoutes = require('./routes/premiumAdRoutes');
 const versionRoutes = require('./routes/versionRoutes');
+const contactFormRoutes = require('./routes/contactFormRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,6 +44,7 @@ app.use('/api/hire-bookings', hireBookingRoutes);
 app.use('/api/premium-backgrounds', premiumBackgroundRoutes);
 app.use('/api/premium-ads', premiumAdRoutes);
 app.use('/api/version', versionRoutes);
+app.use('/api/contact-forms', contactFormRoutes);
 
 // Root route
 app.get('/', (req, res) => {
