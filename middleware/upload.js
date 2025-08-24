@@ -4,7 +4,11 @@ const path = require('path');
 // Configure storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    if (file.fieldname === 'logo') {
+      cb(null, 'uploads/logos/');
+    } else {
+      cb(null, 'uploads/');
+    }
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now().toString(16)}_${file.originalname}`);
@@ -23,6 +27,17 @@ const fileFilter = (req, file, cb) => {
       cb(null, true);
     } else {
       cb(new Error('Only JPEG, JPG and PNG image files are allowed!'), false);
+    }
+  } else if (file.fieldname === 'logo') {
+    if (
+      file.mimetype === 'image/jpeg' ||
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/svg+xml'
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPEG, JPG, PNG and SVG logo files are allowed!'), false);
     }
   } else if (file.fieldname === 'videos') {
     if (

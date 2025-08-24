@@ -321,3 +321,80 @@ exports.getUserStatistics = async (req, res) => {
     res.status(500).json({ message: 'Server error while fetching user statistics' });
   }
 };
+
+// Upload user logo
+exports.uploadLogo = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No logo file provided' });
+    }
+
+    const logoPath = req.file.path.replace(/\\/g, '/');
+    const updated = await User.updateLogo(req.user.user_id, logoPath);
+
+    if (!updated) {
+      return res.status(500).json({ message: 'Failed to update logo' });
+    }
+
+    res.json({
+      message: 'Logo uploaded successfully',
+      logo: logoPath
+    });
+  } catch (error) {
+    console.error('Upload logo error:', error);
+    res.status(500).json({ message: 'Server error while uploading logo' });
+  }
+};
+
+// Get user logo
+exports.getLogo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const logo = await User.getLogo(id);
+
+    if (!logo) {
+      return res.status(404).json({ message: 'No logo found for this user' });
+    }
+
+    res.json({ logo });
+  } catch (error) {
+    console.error('Get logo error:', error);
+    res.status(500).json({ message: 'Server error while fetching logo' });
+  }
+};
+
+// Remove user logo
+exports.removeLogo = async (req, res) => {
+  try {
+    const updated = await User.removeLogo(req.user.user_id);
+
+    if (!updated) {
+      return res.status(500).json({ message: 'Failed to remove logo' });
+    }
+
+    res.json({ message: 'Logo removed successfully' });
+  } catch (error) {
+    console.error('Remove logo error:', error);
+    res.status(500).json({ message: 'Server error while removing logo' });
+  }
+};
+
+// Get dealerships with logos (public endpoint)
+exports.getDealershipsWithLogos = async (req, res) => {
+  try {
+    const { page = 1, limit = 20 } = req.query;
+    const result = await User.getDealers(page, limit);
+    
+    res.json({
+      success: true,
+      dealerships: result.dealers,
+      pagination: result.pagination
+    });
+  } catch (error) {
+    console.error('Get dealerships with logos error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Server error while fetching dealerships' 
+    });
+  }
+};

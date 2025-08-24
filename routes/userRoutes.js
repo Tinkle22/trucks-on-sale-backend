@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { body } = require('express-validator');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 
 // Validation middleware
 const registerValidation = [
@@ -34,12 +35,15 @@ const changePasswordValidation = [
 // Public routes
 router.post('/register', registerValidation, userController.register);
 router.post('/login', loginValidation, userController.login);
-router.get('/dealers/public', userController.getDealers); // Public endpoint for mobile app
+router.get('/dealers/public', userController.getDealershipsWithLogos); // Public endpoint for mobile app with logos
+router.get('/:id/logo', userController.getLogo); // Public endpoint to get user logo
 
 // Protected routes (require authentication)
 router.get('/profile', authenticateToken, userController.getProfile);
 router.put('/profile', authenticateToken, updateProfileValidation, userController.updateProfile);
 router.put('/change-password', authenticateToken, changePasswordValidation, userController.changePassword);
+router.post('/logo', authenticateToken, upload.single('logo'), userController.uploadLogo);
+router.delete('/logo', authenticateToken, userController.removeLogo);
 
 // Admin routes
 router.get('/', authenticateToken, requireAdmin, userController.getAllUsers);

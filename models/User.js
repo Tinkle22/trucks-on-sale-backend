@@ -158,7 +158,7 @@ class User {
     try {
       const offset = (page - 1) * limit;
 
-      // Get dealers with vehicle count and additional info
+      // Get dealers with vehicle count and additional info including logo
       const [rows] = await db.query(`
         SELECT
           u.user_id,
@@ -169,6 +169,7 @@ class User {
           u.status,
           u.registered_at,
           u.physical_address,
+          u.logo,
           COUNT(v.vehicle_id) as vehicle_count
         FROM users u
         LEFT JOIN vehicles v ON u.user_id = v.dealer_id AND v.status = 'available'
@@ -227,6 +228,42 @@ class User {
         [hashedPassword, id]
       );
 
+      return result.affectedRows > 0;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async updateLogo(id, logoPath) {
+    try {
+      const [result] = await db.query(
+        'UPDATE users SET logo = ? WHERE user_id = ?',
+        [logoPath, id]
+      );
+      return result.affectedRows > 0;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getLogo(id) {
+    try {
+      const [rows] = await db.query(
+        'SELECT logo FROM users WHERE user_id = ?',
+        [id]
+      );
+      return rows[0]?.logo || null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async removeLogo(id) {
+    try {
+      const [result] = await db.query(
+        'UPDATE users SET logo = NULL WHERE user_id = ?',
+        [id]
+      );
       return result.affectedRows > 0;
     } catch (error) {
       throw error;
