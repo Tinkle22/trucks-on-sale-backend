@@ -8,9 +8,9 @@ const versionConfig = {
   minimum_version: '1.0.0',
   release_notes: 'Bug fixes and performance improvements. Enhanced vehicle search and improved user experience.',
   ios_url: 'https://apps.apple.com/app/trucks-on-sale/id123456789', // Replace with actual App Store URL
-  android_url: 'https://play.google.com/store/apps/details?id=com.lesa2022.trucks24.co.za',
+  android_url: 'https://play.google.com/store/apps/details?id=com.lesa2022.trucks24',
   // Removed force_update_below - all updates are now optional
-  update_url: 'https://trucksonsale.co.za/download' // Generic download page
+  update_url: 'https://play.google.com/store/apps/details?id=com.lesa2022.trucks24' // Generic download page
 };
 
 // Function to compare version strings (semantic versioning)
