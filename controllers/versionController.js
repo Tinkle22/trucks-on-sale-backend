@@ -4,7 +4,7 @@ const path = require('path');
 
 // Version configuration - update these when releasing new versions
 const versionConfig = {
-  latest_version: '1.0.1',
+  latest_version: '1.0.2',
   minimum_version: '1.0.0',
   release_notes: 'Bug fixes and performance improvements. Enhanced vehicle search and improved user experience.',
   ios_url: 'https://apps.apple.com/app/trucks-on-sale/id123456789', // Replace with actual App Store URL
