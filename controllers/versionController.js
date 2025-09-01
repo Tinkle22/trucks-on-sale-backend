@@ -92,7 +92,7 @@ exports.checkVersion = async (req, res) => {
       success: true,
       current_version,
       latest_version: versionConfig.latest_version,
-      update_available: updateAvailable,
+      needs_update: updateAvailable,
       force_update: forceUpdate,
       release_notes: versionConfig.release_notes,
       update_url: versionConfig.update_url,
