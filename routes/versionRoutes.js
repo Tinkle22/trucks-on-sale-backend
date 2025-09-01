@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const versionController = require('../controllers/versionController');
 
-// Public route for version checking
+// Public routes for version checking
 router.post('/check', versionController.checkVersion);
+router.get('/', versionController.checkVersion);
 
 // Admin routes for version management (uncomment when auth is implemented)
 // router.get('/config', authenticateToken, requireAdmin, versionController.getVersionConfig);

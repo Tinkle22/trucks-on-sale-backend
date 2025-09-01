@@ -4,7 +4,7 @@ const path = require('path');
 
 // Version configuration - update these when releasing new versions
 const versionConfig = {
-  latest_version: '1.0.0',
+  latest_version: '1.0.1',
   minimum_version: '1.0.0',
   release_notes: 'Bug fixes and performance improvements. Enhanced vehicle search and improved user experience.',
   ios_url: 'https://apps.apple.com/app/trucks-on-sale/id123456789', // Replace with actual App Store URL
@@ -52,12 +52,14 @@ const logVersionCheck = (data) => {
 // Check app version
 exports.checkVersion = async (req, res) => {
   try {
+    // Handle both GET (query params) and POST (body) requests
+    const data = req.method === 'GET' ? req.query : req.body;
     const {
       current_version = '1.0.0',
       build_number = '1',
       platform = 'unknown',
       app_id = 'trucks-on-sale'
-    } = req.body;
+    } = data;
 
     console.log('Version check request:', {
       current_version,

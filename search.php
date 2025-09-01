@@ -258,6 +258,22 @@ $fuel_types = $db->query("SELECT DISTINCT fuel_type FROM vehicles WHERE fuel_typ
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehicle Search - TrucksOnSale</title>
     
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="Vehicle Search - TrucksOnSale">
+    <meta property="og:description" content="Find your perfect vehicle with our comprehensive search filters. Browse trucks, cars, and commercial vehicles for sale, hire, or rent-to-own.">
+    <meta property="og:image" content="https://trucks24.co.za/assets/logo.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://trucks24.co.za/search.php">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TrucksOnSale">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Vehicle Search - TrucksOnSale">
+    <meta name="twitter:description" content="Find your perfect vehicle with our comprehensive search filters. Browse trucks, cars, and commercial vehicles for sale, hire, or rent-to-own.">
+    <meta name="twitter:image" content="https://trucks24.co.za/assets/logo.jpg">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
