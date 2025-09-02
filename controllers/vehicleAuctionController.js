@@ -1,6 +1,6 @@
 const Vehicle = require('../models/Vehicle');
 const AuctionBid = require('../models/AuctionBid');
-const db = require('../config/database');
+const db = require('../config/db');
 
 // Get all auction vehicles
 exports.getAuctionVehicles = async (req, res) => {
