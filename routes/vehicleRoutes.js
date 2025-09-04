@@ -7,6 +7,7 @@ const { check } = require('express-validator');
 // All routes are now public
 router.get('/', vehicleController.getAllVehicles);
 router.get('/featured', vehicleController.getFeaturedVehicles);
+router.get('/rent-to-own', vehicleController.getRentToOwnVehicles);
 router.get('/stats/all', vehicleController.getVehicleStats);
 
 // New routes for makes and models - these must come before /:id route

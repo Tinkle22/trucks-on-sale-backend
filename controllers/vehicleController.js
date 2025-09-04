@@ -672,3 +672,88 @@ exports.getAllCategories = async (req, res) => {
     res.status(500).json({ message: 'Server error while fetching categories' });
   }
 };
+
+// Get rent-to-own vehicles
+exports.getRentToOwnVehicles = async (req, res) => {
+  try {
+    console.log('getRentToOwnVehicles called with query params:', JSON.stringify(req.query, null, 2));
+
+    const {
+      category, subcategory_id, make, model, variant, year_min, year_max,
+      price_min, price_max, mileage_min, mileage_max, hours_min, hours_max,
+      region, city, condition, condition_type, condition_rating,
+      fuel_type, transmission, engine_type, color, horsepower_min, horsepower_max,
+      no_accidents, warranty, finance_available, trade_in,
+      service_history, roadworthy, featured, search_term,
+      page = 1, limit = 15, sort = 'created_at', order = 'desc', random = 'false'
+    } = req.query;
+
+    // Build filter object with rent-to-own specific filters
+    const filters = {
+      listing_type: 'rent-to-own',
+      status: 'available'
+    };
+    
+    if (category) filters.category = category;
+    if (subcategory_id) filters.subcategory_id = subcategory_id;
+    if (make) {
+      // Handle comma-separated makes
+      const makes = make.split(',');
+      if (makes.length > 1) {
+        filters.make = makes;
+      } else {
+        filters.make = make;
+      }
+    }
+    if (model) filters.model = model;
+    if (variant) filters.variant = variant;
+    if (region) filters.region = region;
+    if (city) filters.city = city;
+    if (condition) filters.condition_type = condition;
+    if (condition_type) filters.condition_type = condition_type;
+    if (condition_rating) filters.condition_rating = condition_rating;
+    if (fuel_type) filters.fuel_type = fuel_type;
+    if (transmission) filters.transmission = transmission;
+    if (engine_type) filters.engine_type = engine_type;
+    if (color) filters.color = color;
+
+    // Feature filters (boolean values)
+    if (no_accidents === 'true' || no_accidents === true) filters.no_accidents = 1;
+    if (warranty === 'true' || warranty === true) filters.warranty = 1;
+    if (finance_available === 'true' || finance_available === true) filters.finance_available = 1;
+    if (trade_in === 'true' || trade_in === true) filters.trade_in = 1;
+    if (service_history === 'true' || service_history === true) filters.service_history = 1;
+    if (roadworthy === 'true' || roadworthy === true) filters.roadworthy = 1;
+    if (featured === 'true' || featured === true) filters.featured = 1;
+
+    // For range filters and search term, we'll handle them in the search method
+    const searchParams = {
+      ...filters,
+      year_min,
+      year_max,
+      price_min,
+      price_max,
+      mileage_min,
+      mileage_max,
+      hours_min,
+      hours_max,
+      horsepower_min,
+      horsepower_max,
+      search_term
+    };
+
+    // Use random ordering if requested
+    const finalSort = random === 'true' ? 'random' : sort;
+    const result = await Vehicle.search(searchParams, page, limit, finalSort, order);
+
+    // Get images for each vehicle
+    for (const vehicle of result.vehicles) {
+      vehicle.images = await VehicleImage.findByVehicleId(vehicle.vehicle_id);
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('Get rent-to-own vehicles error:', error);
+    res.status(500).json({ message: 'Server error while fetching rent-to-own vehicles' });
+  }
+};

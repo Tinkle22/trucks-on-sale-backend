@@ -42,6 +42,7 @@ exports.getAuctionVehicles = async (req, res) => {
 
     const query = `
       SELECT v.*, 
+             vi.image_path,
              COALESCE(v.current_bid, v.reserve_price, v.price) as current_bid_amount,
              (SELECT COUNT(*) FROM auction_bids ab WHERE ab.vehicle_id = v.vehicle_id AND ab.status = 'active') as bid_count,
              CASE 
@@ -50,6 +51,11 @@ exports.getAuctionVehicles = async (req, res) => {
                ELSE 'active'
              END as auction_status
       FROM vehicles v
+      LEFT JOIN (
+        SELECT vehicle_id, image_path
+        FROM vehicle_images
+        WHERE is_primary = 1
+      ) vi ON v.vehicle_id = vi.vehicle_id
       ${whereClause}
       ORDER BY v.featured DESC, v.created_at DESC
       LIMIT ? OFFSET ?
@@ -135,7 +141,9 @@ exports.getAuctionVehicleDetails = async (req, res) => {
         auction_status: auctionStatus,
         current_bid_amount: vehicle.current_bid || vehicle.reserve_price || vehicle.price
       },
-      bid_history: bidHistory,
+      bidHistory: bidHistory,
+      currentBid: highestBid ? highestBid.bid_amount : 0,
+      bidCount: bidStats[0].total_bids,
       highest_bid: highestBid,
       bid_statistics: bidStats[0]
     });
@@ -178,14 +186,18 @@ exports.placeBid = async (req, res) => {
       WHERE vehicle_id = ? AND status = 'active'
     `, [id]);
 
-    const currentHighestBid = currentBidResult[0].highest_bid || vehicle.reserve_price || vehicle.price || 0;
-    const minimumBid = currentHighestBid + 1000; // Minimum increment of R1000
+    const currentHighestBid = currentBidResult[0].highest_bid || 0;
+    const startingPrice = vehicle.reserve_price || vehicle.price || 0;
+    
+    // If no bids exist, minimum bid is the starting price
+    // If bids exist, minimum bid is current highest + 1000
+    const minimumBid = currentHighestBid > 0 ? currentHighestBid + 1000 : startingPrice;
 
     if (parseFloat(bid_amount) < minimumBid) {
       return res.status(400).json({ 
-        message: `Bid must be at least R${minimumBid.toLocaleString()}`,
-        minimum_bid: minimumBid,
-        current_highest_bid: currentHighestBid
+        message: `Bid must be at least R${Math.round(minimumBid).toLocaleString('en-ZA', { maximumFractionDigits: 0 })}`,
+        minimum_bid: Math.round(minimumBid),
+        current_highest_bid: Math.round(currentHighestBid)
       });
     }
 
