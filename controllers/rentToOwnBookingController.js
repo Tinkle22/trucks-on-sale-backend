@@ -78,12 +78,25 @@ exports.createBooking = async (req, res) => {
       return res.status(400).json({ message: 'Vehicle is not available for rent-to-own' });
     }
     
-    // Add created_at timestamp
-    req.body.created_at = new Date();
-    console.log('Creating booking with data:', req.body);
+    // Filter only valid database fields
+    const validFields = {
+      vehicle_id: req.body.vehicle_id,
+      customer_name: req.body.customer_name,
+      customer_email: req.body.customer_email,
+      customer_phone: req.body.customer_phone,
+      monthly_income: req.body.monthly_income,
+      employment_status: req.body.employment_status,
+      employer_name: req.body.employer_name,
+      preferred_term: req.body.preferred_term,
+      down_payment: req.body.down_payment,
+      status: req.body.status || 'pending',
+      created_at: new Date()
+    };
+    
+    console.log('Creating booking with filtered data:', validFields);
     
     // Create rent-to-own booking
-    const booking = await RentToOwnBooking.create(req.body);
+    const booking = await RentToOwnBooking.create(validFields);
     console.log('Booking created successfully:', booking);
     
     res.status(201).json({
