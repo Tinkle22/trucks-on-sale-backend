@@ -159,8 +159,8 @@ class PremiumAd {
       if (this.image_url.startsWith('http://') || this.image_url.startsWith('https://')) {
         imageUrl = this.image_url;
       } else {
-        // Otherwise, prepend the trucks24.co.za domain
-        imageUrl = `https://trucks24.co.za/listings/${this.image_url.replace(/^\//, '')}`;
+        // Otherwise, prepend the trucksonsale.co.za domain
+        imageUrl = `https://trucksonsale.co.za/listings/${this.image_url.replace(/^\//, '')}`;
       }
     }
 

@@ -11,7 +11,7 @@ class VehicleImage {
     }
 
     // Get the image domain from environment or use default
-    const imageDomain = process.env.IMAGE_DOMAIN || 'https://trucks24.co.za';
+    const imageDomain = process.env.IMAGE_DOMAIN || 'https://trucksonsale.co.za';
 
     // Clean up the path to avoid double /uploads/
     let cleanPath = imagePath;
