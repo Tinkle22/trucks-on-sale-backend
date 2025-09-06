@@ -173,6 +173,29 @@ class Category {
       throw error;
     }
   }
+
+  static async getCategoriesWithVehicleCounts() {
+    try {
+      const [rows] = await db.query(`
+        SELECT 
+          c.category_id,
+          c.category_key,
+          c.category_name,
+          c.icon,
+          c.listing_type,
+          c.category_order,
+          COUNT(v.vehicle_id) as vehicle_count
+        FROM categories c
+        LEFT JOIN vehicles v ON c.category_key = v.category AND v.status = 'active'
+        WHERE c.status = 'active'
+        GROUP BY c.category_id, c.category_key, c.category_name, c.icon, c.listing_type, c.category_order
+        ORDER BY c.category_order ASC, c.category_name ASC
+      `);
+      return rows;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Category;

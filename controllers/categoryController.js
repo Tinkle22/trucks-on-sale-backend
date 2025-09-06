@@ -201,6 +201,17 @@ exports.getCategoryStatistics = async (req, res) => {
   }
 };
 
+// Get categories with vehicle counts
+exports.getCategoriesWithVehicleCounts = async (req, res) => {
+  try {
+    const categories = await Category.getCategoriesWithVehicleCounts();
+    res.json({ categories });
+  } catch (error) {
+    console.error('Get categories with vehicle counts error:', error);
+    res.status(500).json({ message: 'Server error while fetching categories with vehicle counts' });
+  }
+};
+
 // Get makes by category
 exports.getMakesByCategory = async (req, res) => {
   try {

@@ -20,6 +20,7 @@ const makeValidation = [
 // Public routes
 router.get('/', categoryController.getAllCategories);
 router.get('/active', categoryController.getActiveCategories);
+router.get('/with-counts', categoryController.getCategoriesWithVehicleCounts);
 router.get('/:id', categoryController.getCategoryById);
 router.get('/:categoryId/makes', categoryController.getMakesByCategory);
 
