@@ -186,7 +186,7 @@ class Category {
           c.category_order,
           COUNT(v.vehicle_id) as vehicle_count
         FROM categories c
-        LEFT JOIN vehicles v ON c.category_key = v.category AND v.status = 'active'
+        LEFT JOIN vehicles v ON c.category_key = v.category AND v.status = 'available'
         WHERE c.status = 'active'
         GROUP BY c.category_id, c.category_key, c.category_name, c.icon, c.listing_type, c.category_order
         ORDER BY c.category_order ASC, c.category_name ASC
